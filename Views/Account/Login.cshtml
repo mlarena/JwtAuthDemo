@@ -28,7 +28,12 @@
 
                     <div class="mb-3">
                         <label asp-for="Password" class="form-label">Пароль</label>
-                        <input asp-for="Password" class="form-control" placeholder="Введите пароль" />
+                        <div class="input-group">
+                            <input asp-for="Password" class="form-control" placeholder="Введите пароль" />
+                            <button class="btn btn-outline-secondary password-toggle" type="button">
+                                <i class="bi bi-eye"></i>
+                            </button>
+                        </div>
                         <span asp-validation-for="Password" class="text-danger"></span>
                     </div>
 
