@@ -1,0 +1,67 @@
+@model IEnumerable<RoleViewModel>
+@{
+    ViewData["Title"] = "Роли";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2><i class="bi bi-person-badge"></i> Роли</h2>
+    <a asp-action="Create" class="btn btn-primary">
+        <i class="bi bi-plus-lg"></i> Создать
+    </a>
+</div>
+
+<div class="card">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Название</th>
+                        <th>Описание</th>
+                        <th>Системная</th>
+                        <th>Пользователей</th>
+                        <th>Разрешений</th>
+                        <th class="text-end">Действия</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var role in Model)
+                    {
+                        <tr>
+                            <td><strong>@role.Name</strong></td>
+                            <td>@role.Description</td>
+                            <td>
+                                @if (role.IsSystem)
+                                {
+                                    <span class="badge bg-secondary">Системная</span>
+                                }
+                            </td>
+                            <td>@role.UserCount</td>
+                            <td>@role.PermissionCount</td>
+                            <td class="text-end">
+                                <div class="btn-group btn-group-sm">
+                                    <a asp-action="ManagePermissions" asp-route-id="@role.Id" class="btn btn-outline-info" title="Права">
+                                        <i class="bi bi-shield-check"></i>
+                                    </a>
+                                    @if (!role.IsSystem)
+                                    {
+                                        <a asp-action="Edit" asp-route-id="@role.Id" class="btn btn-outline-primary" title="Редактировать">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                        <form asp-action="Delete" asp-route-id="@role.Id" method="post" class="d-inline"
+                                              onsubmit="return confirm('Удалить роль?')">
+                                            @Html.AntiForgeryToken()
+                                            <button type="submit" class="btn btn-outline-danger" title="Удалить">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </form>
+                                    }
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

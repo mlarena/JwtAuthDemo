@@ -1,0 +1,98 @@
+@model AuditLogViewModel
+@{
+    ViewData["Title"] = "Журнал аудита";
+}
+
+<div class="mb-4">
+    <h2><i class="bi bi-journal-text"></i> Журнал аудита</h2>
+    <p class="text-muted">Всего записей: @Model.TotalItems</p>
+</div>
+
+<div class="card mb-4">
+    <div class="card-body">
+        <form asp-action="Index" method="get" class="row g-3">
+            <div class="col-md-2">
+                <label class="form-label">Действие</label>
+                <input type="text" name="action" value="@Model.FilterAction" class="form-control" placeholder="Действие" />
+            </div>
+            <div class="col-md-2">
+                <label class="form-label">Статус</label>
+                <select name="status" class="form-select">
+                    <option value="">Все</option>
+                    <option value="Success" selected="@(Model.FilterStatus == "Success")">Успех</option>
+                    <option value="Failed" selected="@(Model.FilterStatus == "Failed")">Ошибка</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label class="form-label">С</label>
+                <input type="date" name="from" value="@Model.FilterFrom?.ToString("yyyy-MM-dd")" class="form-control" />
+            </div>
+            <div class="col-md-2">
+                <label class="form-label">По</label>
+                <input type="date" name="to" value="@Model.FilterTo?.ToString("yyyy-MM-dd")" class="form-control" />
+            </div>
+            <div class="col-md-2 d-flex align-items-end">
+                <button type="submit" class="btn btn-outline-primary w-100">
+                    <i class="bi bi-search"></i> Найти
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover table-sm align-middle mb-0">
+                <thead class="table-dark">
+                    <tr>
+                        <th>ID</th>
+                        <th>Пользователь</th>
+                        <th>Действие</th>
+                        <th>Ресурс</th>
+                        <th>IP</th>
+                        <th>Статус</th>
+                        <th>Дата</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var log in Model.Logs)
+                    {
+                        <tr>
+                            <td>@log.Id</td>
+                            <td>@(log.UserName ?? "—")</td>
+                            <td>@log.Action</td>
+                            <td>@(log.Resource ?? "—")</td>
+                            <td><small>@(log.IpAddress ?? "—")</small></td>
+                            <td>
+                                <span class="badge @(log.Status == "Success" ? "bg-success" : "bg-danger")">
+                                    @log.Status
+                                </span>
+                            </td>
+                            <td>@log.CreatedAt.ToString("dd.MM.yyyy HH:mm:ss")</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@if (Model.TotalPages > 1)
+{
+    <nav class="mt-3">
+        <ul class="pagination justify-content-center">
+            @for (int i = 1; i <= Model.TotalPages; i++)
+            {
+                <li class="page-item @(i == Model.CurrentPage ? "active" : "")">
+                    <a class="page-link" asp-action="Index"
+                       asp-route-page="@i"
+                       asp-route-action="@Model.FilterAction"
+                       asp-route-status="@Model.FilterStatus"
+                       asp-route-from="@Model.FilterFrom?.ToString("yyyy-MM-dd")"
+                       asp-route-to="@Model.FilterTo?.ToString("yyyy-MM-dd")">@i</a>
+                </li>
+            }
+        </ul>
+    </nav>
+}

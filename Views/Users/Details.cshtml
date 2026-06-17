@@ -1,0 +1,61 @@
+@model JwtAuthDemo.Models.Entities.User
+@{
+    ViewData["Title"] = "Детали пользователя";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2><i class="bi bi-person"></i> @Model.UserName</h2>
+    <div>
+        <a asp-action="AssignRoles" asp-route-id="@Model.Id" class="btn btn-outline-warning">
+            <i class="bi bi-person-badge"></i> Роли
+        </a>
+        <a asp-action="Index" class="btn btn-outline-secondary">Назад</a>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-body">
+                <dl class="row mb-0">
+                    <dt class="col-sm-4">ID</dt>
+                    <dd class="col-sm-8">@Model.Id</dd>
+                    <dt class="col-sm-4">Имя пользователя</dt>
+                    <dd class="col-sm-8">@Model.UserName</dd>
+                    <dt class="col-sm-4">Email</dt>
+                    <dd class="col-sm-8">@Model.Email</dd>
+                    <dt class="col-sm-4">Имя</dt>
+                    <dd class="col-sm-8">@(Model.FirstName ?? "—")</dd>
+                    <dt class="col-sm-4">Фамилия</dt>
+                    <dd class="col-sm-8">@(Model.LastName ?? "—")</dd>
+                    <dt class="col-sm-4">Email подтвержден</dt>
+                    <dd class="col-sm-8">@(Model.IsEmailConfirmed ? "Да" : "Нет")</dd>
+                    <dt class="col-sm-4">Активен</dt>
+                    <dd class="col-sm-8">@(Model.IsActive ? "Да" : "Нет")</dd>
+                    <dt class="col-sm-4">Заблокирован</dt>
+                    <dd class="col-sm-8">@(Model.IsLocked ? "Да" : "Нет")</dd>
+                    <dt class="col-sm-4">Регистрация</dt>
+                    <dd class="col-sm-8">@Model.CreatedAt.ToString("dd.MM.yyyy HH:mm")</dd>
+                    <dt class="col-sm-4">Последний вход</dt>
+                    <dd class="col-sm-8">@(Model.LastLoginAt?.ToString("dd.MM.yyyy HH:mm") ?? "—")</dd>
+                </dl>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">Роли</div>
+            <div class="card-body">
+                @foreach (var ur in Model.UserRoles)
+                {
+                    <span class="badge bg-primary me-1 fs-6">@ur.Role.Name</span>
+                }
+                @if (!Model.UserRoles.Any())
+                {
+                    <span class="text-muted">Нет ролей</span>
+                }
+            </div>
+        </div>
+    </div>
+</div>

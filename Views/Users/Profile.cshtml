@@ -1,0 +1,145 @@
+@model JwtAuthDemo.Models.Entities.User
+@{
+    ViewData["Title"] = "Профиль";
+    var auditLogs = ViewBag.AuditLogs as IEnumerable<JwtAuthDemo.Models.Entities.AuditLog>;
+    var sessions = ViewBag.Sessions as IEnumerable<JwtAuthDemo.Models.Entities.RefreshToken>;
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2><i class="bi bi-person-circle"></i> Профиль</h2>
+    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-outline-primary">
+        <i class="bi bi-pencil"></i> Редактировать
+    </a>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card mb-4">
+            <div class="card-header"><i class="bi bi-person"></i> Личная информация</div>
+            <div class="card-body">
+                <dl class="row mb-0">
+                    <dt class="col-sm-4">Имя пользователя</dt>
+                    <dd class="col-sm-8">@Model.UserName</dd>
+                    <dt class="col-sm-4">Email</dt>
+                    <dd class="col-sm-8">
+                        @Model.Email
+                        @if (Model.IsEmailConfirmed)
+                        {
+                            <span class="badge bg-success ms-1"><i class="bi bi-check"></i> Подтвержден</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-warning ms-1">Не подтвержден</span>
+                        }
+                    </dd>
+                    <dt class="col-sm-4">Имя</dt>
+                    <dd class="col-sm-8">@(Model.FirstName ?? "—")</dd>
+                    <dt class="col-sm-4">Фамилия</dt>
+                    <dd class="col-sm-8">@(Model.LastName ?? "—")</dd>
+                    <dt class="col-sm-4">Роли</dt>
+                    <dd class="col-sm-8">
+                        @foreach (var ur in Model.UserRoles)
+                        {
+                            <span class="badge bg-primary me-1">@ur.Role.Name</span>
+                        }
+                    </dd>
+                    <dt class="col-sm-4">Статус</dt>
+                    <dd class="col-sm-8">
+                        @if (Model.IsLocked)
+                        {
+                            <span class="badge bg-danger">Заблокирован</span>
+                        }
+                        else if (!Model.IsActive)
+                        {
+                            <span class="badge bg-warning">Неактивен</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-success">Активен</span>
+                        }
+                    </dd>
+                    <dt class="col-sm-4">Регистрация</dt>
+                    <dd class="col-sm-8">@Model.CreatedAt.ToString("dd.MM.yyyy HH:mm")</dd>
+                </dl>
+            </div>
+        </div>
+
+        <div class="card mb-4">
+            <div class="card-header"><i class="bi bi-clock-history"></i> Активные сессии</div>
+            <div class="card-body p-0">
+                @if (sessions != null && sessions.Any())
+                {
+                    <div class="table-responsive">
+                        <table class="table table-sm mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Создана</th>
+                                    <th>Истекает</th>
+                                    <th>IP</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var session in sessions)
+                                {
+                                    <tr>
+                                        <td>@session.Created.ToString("dd.MM HH:mm")</td>
+                                        <td>@session.Expires.ToString("dd.MM HH:mm")</td>
+                                        <td>@session.CreatedByIp</td>
+                                        <td>
+                                            <span class="badge bg-success">Активна</span>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+                else
+                {
+                    <p class="text-muted p-3 mb-0">Нет активных сессий</p>
+                }
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="card mb-4">
+            <div class="card-header"><i class="bi bi-journal-text"></i> История входов</div>
+            <div class="card-body p-0">
+                @if (auditLogs != null && auditLogs.Any())
+                {
+                    <div class="table-responsive">
+                        <table class="table table-sm mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Действие</th>
+                                    <th>Дата</th>
+                                    <th>Статус</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var log in auditLogs)
+                                {
+                                    <tr>
+                                        <td>@log.Action</td>
+                                        <td>@log.CreatedAt.ToString("dd.MM.yyyy HH:mm")</td>
+                                        <td>
+                                            <span class="badge @(log.Status == "Success" ? "bg-success" : "bg-danger")">
+                                                @log.Status
+                                            </span>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+                else
+                {
+                    <p class="text-muted p-3 mb-0">Нет записей</p>
+                }
+            </div>
+        </div>
+    </div>
+</div>
