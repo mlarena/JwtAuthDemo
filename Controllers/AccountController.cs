@@ -1,4 +1,3 @@
-using JwtAuthDemo.Infrastructure;
 using JwtAuthDemo.Models.Entities;
 using JwtAuthDemo.Services;
 using JwtAuthDemo.ViewModels;
@@ -6,21 +5,25 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
+using JwtAuthDemo.Infrastructure;
 
 namespace JwtAuthDemo.Controllers;
 
+[Authorize]
 public class AccountController : Controller
 {
     private readonly IJwtTokenService _jwtTokenService;
     private readonly IUserService _userService;
     private readonly IAuditLogService _auditLogService;
+    private readonly IAuditLogQueryableService _auditLogQueryableService;
     private readonly ApplicationDbContext _context;
 
-    public AccountController(IJwtTokenService jwtTokenService, IUserService userService, IAuditLogService auditLogService, ApplicationDbContext context)
+    public AccountController(IJwtTokenService jwtTokenService, IUserService userService, IAuditLogService auditLogService, IAuditLogQueryableService auditLogQueryableService, ApplicationDbContext context)
     {
         _jwtTokenService = jwtTokenService;
         _userService = userService;
         _auditLogService = auditLogService;
+        _auditLogQueryableService = auditLogQueryableService;
         _context = context;
     }
 
@@ -116,7 +119,10 @@ public class AccountController : Controller
             Email = model.Email,
             FirstName = model.FirstName,
             LastName = model.LastName,
-            EmailConfirmationToken = Guid.NewGuid().ToString("N")
+            PasswordHash = BCrypt.Net.BCrypt.HashPassword(model.Password),
+            EmailConfirmationToken = Guid.NewGuid().ToString("N"),
+            IsActive = true,
+            CreatedAt = DateTimeOffset.UtcNow
         };
 
         if (!await _userService.CreateUserAsync(user, model.Password, new List<int> { 4 }))
@@ -132,7 +138,6 @@ public class AccountController : Controller
     }
 
     [HttpPost]
-    [Authorize]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Logout()
     {
@@ -231,6 +236,52 @@ public class AccountController : Controller
 
         TempData["SuccessMessage"] = "Пароль успешно сброшен. Войдите в систему.";
         return RedirectToAction(nameof(Login));
+    }
+
+    [HttpPost]
+    [AllowAnonymous]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> RefreshToken()
+    {
+        var jwtToken = Request.Cookies["jwt"];
+        if (string.IsNullOrEmpty(jwtToken))
+            return RedirectToAction(nameof(Login));
+
+        var principal = _jwtTokenService.GetPrincipalFromExpiredToken(jwtToken);
+        if (principal == null)
+            return RedirectToAction(nameof(Login));
+
+        var userIdClaim = principal.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (!int.TryParse(userIdClaim, out var userId))
+            return RedirectToAction(nameof(Login));
+
+        var user = await _userService.GetUserByIdAsync(userId);
+        if (user == null || user.IsLocked || !user.IsActive)
+            return RedirectToAction(nameof(Login));
+
+        var roles = await _userService.GetUserRolesAsync(user.Id);
+        var permissions = await _userService.GetUserPermissionsAsync(user.Id);
+
+        var newAccessToken = _jwtTokenService.GenerateAccessToken(user, roles, permissions);
+        var newRefreshToken = _jwtTokenService.GenerateRefreshToken();
+
+        var oldRefreshTokens = await _context.RefreshTokens.Where(rt => rt.UserId == userId).ToListAsync();
+        foreach (var old in oldRefreshTokens)
+            old.Revoked = DateTimeOffset.UtcNow;
+
+        _context.RefreshTokens.Add(new RefreshToken
+        {
+            Token = newRefreshToken,
+            UserId = user.Id,
+            Expires = DateTimeOffset.UtcNow.AddDays(7),
+            CreatedByIp = GetClientIp()
+        });
+
+        await _context.SaveChangesAsync();
+
+        SetJwtCookie(newAccessToken);
+
+        return RedirectToAction("Dashboard", "Home");
     }
 
     private void SetJwtCookie(string token)
