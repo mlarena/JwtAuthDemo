@@ -24,6 +24,7 @@ bld/
 logs/
 ComplexesMonitoring.TCM/wwwroot/snapshots
 ComplexesMonitoring.TCMV2/
+obj/
 
 # Visual Studio 2015 cache/options directory
 .vs/
