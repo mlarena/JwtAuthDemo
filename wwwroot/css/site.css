@@ -1,31 +1,21 @@
-html {
-  font-size: 14px;
-}
-
-@media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
-}
-
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
-}
-
-html {
-  position: relative;
-  min-height: 100%;
-}
-
-body {
-  margin-bottom: 60px;
-}
-
-.form-floating > .form-control-plaintext::placeholder, .form-floating > .form-control::placeholder {
-  color: var(--bs-secondary-color);
-  text-align: end;
-}
-
-.form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
-  text-align: start;
-}
+@import url('0-settings/variables.css');
+@import url('0-settings/reset.css');
+@import url('1-utilities/layout.css');
+@import url('1-utilities/spacing.css');
+@import url('1-utilities/typography.css');
+@import url('1-utilities/colors.css');
+@import url('1-utilities/borders.css');
+@import url('1-utilities/interactions.css');
+@import url('2-components/buttons.css');
+@import url('2-components/forms.css');
+@import url('2-components/tables.css');
+@import url('2-components/cards.css');
+@import url('2-components/modals.css');
+@import url('2-components/alerts.css');
+@import url('2-components/pagination.css');
+@import url('2-components/breadcrumbs.css');
+@import url('3-layouts/header.css');
+@import url('3-layouts/sidebar.css');
+@import url('3-layouts/main-content.css');
+@import url('4-helpers/animations.css');
+@import url('4-helpers/print.css');

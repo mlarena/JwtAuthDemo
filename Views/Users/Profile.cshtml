@@ -5,72 +5,74 @@
     var sessions = ViewBag.Sessions as IEnumerable<JwtAuthDemo.Models.Entities.RefreshToken>;
 }
 
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <h2><i class="bi bi-person-circle"></i> Профиль</h2>
-    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-outline-primary">
-        <i class="bi bi-pencil"></i> Редактировать
-    </a>
+<div class="page-header">
+    <h2><i class="fas fa-user-circle"></i> Профиль</h2>
+    <div class="page-actions">
+        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-outline-primary">
+            <i class="fas fa-pencil-alt"></i> Редактировать
+        </a>
+    </div>
 </div>
 
-<div class="row">
-    <div class="col-md-6">
-        <div class="card mb-4">
-            <div class="card-header"><i class="bi bi-person"></i> Личная информация</div>
+<div class="content-grid cols-2">
+    <div>
+        <div class="card">
+            <div class="card-header"><i class="fas fa-user"></i> Личная информация</div>
             <div class="card-body">
-                <dl class="row mb-0">
-                    <dt class="col-sm-4">Имя пользователя</dt>
-                    <dd class="col-sm-8">@Model.UserName</dd>
-                    <dt class="col-sm-4">Email</dt>
-                    <dd class="col-sm-8">
+                <dl class="detail-list">
+                    <dt>Имя пользователя</dt>
+                    <dd>@Model.UserName</dd>
+                    <dt>Email</dt>
+                    <dd>
                         @Model.Email
                         @if (Model.IsEmailConfirmed)
                         {
-                            <span class="badge bg-success ms-1"><i class="bi bi-check"></i> Подтвержден</span>
+                            <span class="badge-success"><i class="fas fa-check"></i> Подтвержден</span>
                         }
                         else
                         {
-                            <span class="badge bg-warning ms-1">Не подтвержден</span>
+                            <span class="badge-gray">Не подтвержден</span>
                         }
                     </dd>
-                    <dt class="col-sm-4">Имя</dt>
-                    <dd class="col-sm-8">@(Model.FirstName ?? "—")</dd>
-                    <dt class="col-sm-4">Фамилия</dt>
-                    <dd class="col-sm-8">@(Model.LastName ?? "—")</dd>
-                    <dt class="col-sm-4">Роли</dt>
-                    <dd class="col-sm-8">
+                    <dt>Имя</dt>
+                    <dd>@(Model.FirstName ?? "—")</dd>
+                    <dt>Фамилия</dt>
+                    <dd>@(Model.LastName ?? "—")</dd>
+                    <dt>Роли</dt>
+                    <dd>
                         @foreach (var ur in Model.UserRoles)
                         {
-                            <span class="badge bg-primary me-1">@ur.Role.Name</span>
+                            <span class="badge-success">@ur.Role.Name</span>
                         }
                     </dd>
-                    <dt class="col-sm-4">Статус</dt>
-                    <dd class="col-sm-8">
+                    <dt>Статус</dt>
+                    <dd>
                         @if (Model.IsLocked)
                         {
-                            <span class="badge bg-danger">Заблокирован</span>
+                            <span class="badge-danger">Заблокирован</span>
                         }
                         else if (!Model.IsActive)
                         {
-                            <span class="badge bg-warning">Неактивен</span>
+                            <span class="badge-gray">Неактивен</span>
                         }
                         else
                         {
-                            <span class="badge bg-success">Активен</span>
+                            <span class="badge-success">Активен</span>
                         }
                     </dd>
-                    <dt class="col-sm-4">Регистрация</dt>
-                    <dd class="col-sm-8">@Model.CreatedAt.ToString("dd.MM.yyyy HH:mm")</dd>
+                    <dt>Регистрация</dt>
+                    <dd>@Model.CreatedAt.ToString("dd.MM.yyyy HH:mm")</dd>
                 </dl>
             </div>
         </div>
 
-        <div class="card mb-4">
-            <div class="card-header"><i class="bi bi-clock-history"></i> Активные сессии</div>
-            <div class="card-body p-0">
+        <div class="card">
+            <div class="card-header"><i class="fas fa-history"></i> Активные сессии</div>
+            <div class="card-body">
                 @if (sessions != null && sessions.Any())
                 {
                     <div class="table-responsive">
-                        <table class="table table-sm mb-0">
+                        <table class="table table-hover table-striped">
                             <thead>
                                 <tr>
                                     <th>Создана</th>
@@ -87,7 +89,7 @@
                                         <td>@session.Expires.ToString("dd.MM HH:mm")</td>
                                         <td>@session.CreatedByIp</td>
                                         <td>
-                                            <span class="badge bg-success">Активна</span>
+                                            <span class="badge-success">Активна</span>
                                         </td>
                                     </tr>
                                 }
@@ -97,20 +99,20 @@
                 }
                 else
                 {
-                    <p class="text-muted p-3 mb-0">Нет активных сессий</p>
+                    <p>Нет активных сессий</p>
                 }
             </div>
         </div>
     </div>
 
-    <div class="col-md-6">
-        <div class="card mb-4">
-            <div class="card-header"><i class="bi bi-journal-text"></i> История входов</div>
-            <div class="card-body p-0">
+    <div>
+        <div class="card">
+            <div class="card-header"><i class="fas fa-file-alt"></i> История входов</div>
+            <div class="card-body">
                 @if (auditLogs != null && auditLogs.Any())
                 {
                     <div class="table-responsive">
-                        <table class="table table-sm mb-0">
+                        <table class="table table-hover table-striped">
                             <thead>
                                 <tr>
                                     <th>Действие</th>
@@ -125,7 +127,7 @@
                                         <td>@log.Action</td>
                                         <td>@log.CreatedAt.ToString("dd.MM.yyyy HH:mm")</td>
                                         <td>
-                                            <span class="badge @(log.Status == "Success" ? "bg-success" : "bg-danger")">
+                                            <span class="@(log.Status == "Success" ? "badge-success" : "badge-danger")">
                                                 @log.Status
                                             </span>
                                         </td>
@@ -137,7 +139,7 @@
                 }
                 else
                 {
-                    <p class="text-muted p-3 mb-0">Нет записей</p>
+                    <p>Нет записей</p>
                 }
             </div>
         </div>

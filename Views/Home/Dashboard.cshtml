@@ -3,108 +3,96 @@
     ViewData["Title"] = "Dashboard";
 }
 
-<div class="mb-4">
-    <h2><i class="bi bi-speedometer2"></i> Dashboard</h2>
-    <p class="text-muted">Добро пожаловать, @User.Identity?.Name!</p>
+<div class="page-header">
+    <h2><i class="fas fa-tachometer-alt"></i> Dashboard</h2>
+    <p>Добро пожаловать, @User.Identity?.Name!</p>
 </div>
 
-<div class="row mb-4">
-    <div class="col-md-3">
-        <div class="card stat-card border-primary">
-            <div class="card-body text-center">
-                <i class="bi bi-people fs-1 text-primary"></i>
-                <h3 class="mt-2">@Model.TotalUsers</h3>
-                <p class="text-muted mb-0">Всего пользователей</p>
-            </div>
+<div class="content-grid cols-4">
+    <div class="stat-card">
+        <div class="card-body text-center">
+            <i class="fas fa-users fa-2x"></i>
+            <h3>@Model.TotalUsers</h3>
+            <p>Всего пользователей</p>
         </div>
     </div>
-    <div class="col-md-3">
-        <div class="card stat-card border-success">
-            <div class="card-body text-center">
-                <i class="bi bi-person-check fs-1 text-success"></i>
-                <h3 class="mt-2">@Model.ActiveToday</h3>
-                <p class="text-muted mb-0">Активных сегодня</p>
-            </div>
+    <div class="stat-card">
+        <div class="card-body text-center">
+            <i class="fas fa-user-check fa-2x"></i>
+            <h3>@Model.ActiveToday</h3>
+            <p>Активных сегодня</p>
         </div>
     </div>
-    <div class="col-md-3">
-        <div class="card stat-card border-info">
-            <div class="card-body text-center">
-                <i class="bi bi-person-plus fs-1 text-info"></i>
-                <h3 class="mt-2">@Model.NewThisWeek</h3>
-                <p class="text-muted mb-0">Новых за неделю</p>
-            </div>
+    <div class="stat-card">
+        <div class="card-body text-center">
+            <i class="fas fa-user-plus fa-2x"></i>
+            <h3>@Model.NewThisWeek</h3>
+            <p>Новых за неделю</p>
         </div>
     </div>
-    <div class="col-md-3">
-        <div class="card stat-card border-warning">
-            <div class="card-body text-center">
-                <i class="bi bi-wifi fs-1 text-warning"></i>
-                <h3 class="mt-2">@Model.OnlineNow</h3>
-                <p class="text-muted mb-0">Онлайн сейчас</p>
-            </div>
+    <div class="stat-card">
+        <div class="card-body text-center">
+            <i class="fas fa-wifi fa-2x"></i>
+            <h3>@Model.OnlineNow</h3>
+            <p>Онлайн сейчас</p>
         </div>
     </div>
 </div>
 
-<div class="row">
-    <div class="col-md-6">
-        <div class="card mb-4">
-            <div class="card-header">
-                <i class="bi bi-activity"></i> Последние действия
-            </div>
-            <div class="card-body p-0">
-                <div class="table-responsive">
-                    <table class="table table-sm table-hover mb-0">
-                        <thead>
+<div class="content-grid cols-2">
+    <div class="card">
+        <div class="card-header">
+            <i class="fas fa-activity"></i> Последние действия
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover table-striped">
+                    <thead>
+                        <tr>
+                            <th>Пользователь</th>
+                            <th>Действие</th>
+                            <th>Статус</th>
+                            <th>Дата</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var log in Model.RecentActivity)
+                        {
                             <tr>
-                                <th>Пользователь</th>
-                                <th>Действие</th>
-                                <th>Статус</th>
-                                <th>Дата</th>
+                                <td>@log.UserName</td>
+                                <td>@log.Action</td>
+                                <td>
+                                    <span class="@(log.Status == "Success" ? "badge-success" : "badge-danger")">
+                                        @log.Status
+                                    </span>
+                                </td>
+                                <td>@log.CreatedAt.ToString("dd.MM HH:mm")</td>
                             </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (var log in Model.RecentActivity)
-                            {
-                                <tr>
-                                    <td>@log.UserName</td>
-                                    <td>@log.Action</td>
-                                    <td>
-                                        <span class="badge @(log.Status == "Success" ? "bg-success" : "bg-danger")">
-                                            @log.Status
-                                        </span>
-                                    </td>
-                                    <td>@log.CreatedAt.ToString("dd.MM HH:mm")</td>
-                                </tr>
-                            }
-                        </tbody>
-                    </table>
-                </div>
+                        }
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
 
-    <div class="col-md-6">
-        <div class="card mb-4">
-            <div class="card-header">
-                <i class="bi bi-pie-chart"></i> Распределение по ролям
-            </div>
-            <div class="card-body">
-                @foreach (var role in Model.RoleDistribution)
-                {
-                    var percentage = Model.TotalUsers > 0 ? (role.Count * 100.0 / Model.TotalUsers) : 0;
-                    <div class="mb-2">
-                        <div class="d-flex justify-content-between">
-                            <span>@role.RoleName</span>
-                            <span>@role.Count (@percentage.ToString("F1")%)</span>
-                        </div>
-                        <div class="progress" style="height: 20px;">
-                            <div class="progress-bar bg-primary" style="width: @percentage%"></div>
-                        </div>
+    <div class="card">
+        <div class="card-header">
+            <i class="fas fa-chart-pie"></i> Распределение по ролям
+        </div>
+        <div class="card-body">
+            @foreach (var role in Model.RoleDistribution)
+            {
+                var percentage = Model.TotalUsers > 0 ? (role.Count * 100.0 / Model.TotalUsers) : 0;
+                <div class="form-group">
+                    <div class="form-row">
+                        <span>@role.RoleName</span>
+                        <span>@role.Count (@percentage.ToString("F1")%)</span>
                     </div>
-                }
-            </div>
+                    <div class="progress" style="height: 20px;">
+                        <div class="progress-bar" style="width: @percentage%"></div>
+                    </div>
+                </div>
+            }
         </div>
     </div>
 </div>

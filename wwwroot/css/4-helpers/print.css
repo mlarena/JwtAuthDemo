@@ -1,0 +1,55 @@
+@media print {
+  body {
+    background: white;
+    color: black;
+    font-size: 12pt;
+  }
+
+  .admin-header,
+  .admin-sidebar,
+  .sidebar-overlay,
+  .burger-btn,
+  .theme-toggle,
+  .btn,
+  .pagination,
+  .table-actions,
+  .page-actions {
+    display: none !important;
+  }
+
+  .admin-layout {
+    display: block;
+  }
+
+  .admin-main {
+    padding: 0;
+    grid-column: 1;
+  }
+
+  .card {
+    border: 1px solid #ccc;
+    box-shadow: none;
+    page-break-inside: avoid;
+  }
+
+  .table {
+    font-size: 10pt;
+  }
+
+  .table th,
+  .table td {
+    border: 1px solid #ccc;
+    padding: 4pt 8pt;
+  }
+
+  a {
+    color: black;
+    text-decoration: underline;
+  }
+
+  a[href]::after {
+    content: " (" attr(href) ")";
+    font-size: 8pt;
+    color: #666;
+  }
+}

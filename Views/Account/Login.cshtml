@@ -3,53 +3,48 @@
     ViewData["Title"] = "Вход";
 }
 
-<div class="row justify-content-center mt-5">
-    <div class="col-md-5">
-        <div class="card shadow">
-            <div class="card-body p-4">
-                <h3 class="card-title text-center mb-4"><i class="bi bi-box-arrow-in-right"></i> Вход</h3>
+<div class="auth-page">
+    <div class="card">
+        <div class="card-body">
+            <h3 class="auth-title"><i class="fas fa-sign-in-alt"></i> Вход</h3>
 
-                @if (TempData["SuccessMessage"] != null)
-                {
-                    <div class="alert alert-success">@TempData["SuccessMessage"]</div>
-                }
+            <div asp-validation-summary="All" class="alert alert-danger"></div>
 
-                <div asp-validation-summary="All" class="text-danger mb-3"></div>
+            <form asp-action="Login" method="post">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="returnUrl" value="@ViewBag.ReturnUrl" />
 
-                <form asp-action="Login" method="post">
-                    @Html.AntiForgeryToken()
-                    <input type="hidden" name="returnUrl" value="@ViewBag.ReturnUrl" />
+                <div class="form-group">
+                    <label asp-for="UserNameOrEmail" class="form-label">Имя пользователя или Email</label>
+                    <input asp-for="UserNameOrEmail" class="form-control" placeholder="Введите имя пользователя или email" />
+                    <span asp-validation-for="UserNameOrEmail" class="form-error"></span>
+                </div>
 
-                    <div class="mb-3">
-                        <label asp-for="UserNameOrEmail" class="form-label">Имя пользователя или Email</label>
-                        <input asp-for="UserNameOrEmail" class="form-control" placeholder="Введите имя пользователя или email" />
-                        <span asp-validation-for="UserNameOrEmail" class="text-danger"></span>
+                <div class="form-group">
+                    <label asp-for="Password" class="form-label">Пароль</label>
+                    <div class="input-group">
+                        <input asp-for="Password" class="form-control" placeholder="Введите пароль" />
+                        <button class="btn btn-secondary password-toggle" type="button">
+                            <i class="fas fa-eye"></i>
+                        </button>
                     </div>
+                    <span asp-validation-for="Password" class="form-error"></span>
+                </div>
 
-                    <div class="mb-3">
-                        <label asp-for="Password" class="form-label">Пароль</label>
-                        <div class="input-group">
-                            <input asp-for="Password" class="form-control" placeholder="Введите пароль" />
-                            <button class="btn btn-outline-secondary password-toggle" type="button">
-                                <i class="bi bi-eye"></i>
-                            </button>
-                        </div>
-                        <span asp-validation-for="Password" class="text-danger"></span>
-                    </div>
-
-                    <div class="mb-3 form-check">
+                <div class="form-group">
+                    <div class="form-check">
                         <input asp-for="RememberMe" class="form-check-input" />
                         <label asp-for="RememberMe" class="form-check-label">Запомнить меня</label>
                     </div>
-
-                    <button type="submit" class="btn btn-primary w-100 mb-3">Войти</button>
-                </form>
-
-                <div class="text-center">
-                    <a asp-action="ForgotPassword" class="text-decoration-none">Забыли пароль?</a>
-                    <span class="mx-2">|</span>
-                    <a asp-action="Register" class="text-decoration-none">Регистрация</a>
                 </div>
+
+                <button type="submit" class="btn btn-primary btn-full">Войти</button>
+            </form>
+
+            <div class="auth-links">
+                <a asp-action="ForgotPassword">Забыли пароль?</a>
+                <span class="auth-links-sep">|</span>
+                <a asp-action="Register">Регистрация</a>
             </div>
         </div>
     </div>

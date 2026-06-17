@@ -3,38 +3,35 @@
     ViewData["Title"] = "Создание роли";
 }
 
-<div class="row justify-content-center">
-    <div class="col-md-6">
-        <h2 class="mb-4"><i class="bi bi-person-badge"></i> Создание роли</h2>
+<div class="page-header">
+    <h2><i class="fas fa-user-shield"></i> Создание роли</h2>
+</div>
 
-        <div asp-validation-summary="All" class="text-danger mb-3"></div>
+<div class="card">
+    <div class="card-body">
+        <div asp-validation-summary="All" class="alert alert-danger"></div>
 
-        <div class="card">
-            <div class="card-body">
-                <form asp-action="Create" method="post">
-                    @Html.AntiForgeryToken()
+        <form asp-action="Create" method="post">
+            @Html.AntiForgeryToken()
 
-                    <div class="mb-3">
-                        <label asp-for="Name" class="form-label">Название *</label>
-                        <input asp-for="Name" class="form-control" />
-                        <span asp-validation-for="Name" class="text-danger"></span>
-                    </div>
-
-                    <div class="mb-3">
-                        <label asp-for="Description" class="form-label">Описание</label>
-                        <textarea asp-for="Description" class="form-control" rows="3"></textarea>
-                        <span asp-validation-for="Description" class="text-danger"></span>
-                    </div>
-
-                    <div class="d-flex gap-2">
-                        <button type="submit" class="btn btn-primary">
-                            <i class="bi bi-check-lg"></i> Создать
-                        </button>
-                        <a asp-action="Index" class="btn btn-outline-secondary">Отмена</a>
-                    </div>
-                </form>
+            <div class="form-group">
+                <label asp-for="Name" class="form-label">Название *</label>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="alert-danger"></span>
             </div>
-        </div>
+
+            <div class="form-group">
+                <label asp-for="Description" class="form-label">Описание</label>
+                <textarea asp-for="Description" class="form-control" rows="3"></textarea>
+                <span asp-validation-for="Description" class="alert-danger"></span>
+            </div>
+        </form>
+    </div>
+    <div class="card-footer">
+        <button type="submit" class="btn btn-primary" formmethod="post">
+            <i class="fas fa-check"></i> Создать
+        </button>
+        <a asp-action="Index" class="btn btn-secondary">Отмена</a>
     </div>
 </div>
 

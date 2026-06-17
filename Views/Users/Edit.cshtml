@@ -3,52 +3,49 @@
     ViewData["Title"] = "Редактирование профиля";
 }
 
-<div class="row justify-content-center">
-    <div class="col-md-6">
-        <h2 class="mb-4"><i class="bi bi-pencil"></i> Редактирование профиля</h2>
+<div class="page-header">
+    <h2><i class="fas fa-pencil-alt"></i> Редактирование профиля</h2>
+</div>
 
-        <div asp-validation-summary="All" class="text-danger mb-3"></div>
+<div asp-validation-summary="All" class="alert alert-danger"></div>
 
-        <div class="card">
-            <div class="card-body">
-                <form asp-action="Edit" method="post">
-                    @Html.AntiForgeryToken()
-                    <input type="hidden" asp-for="Id" />
-                    <input type="hidden" asp-for="UserName" />
+<div class="card">
+    <div class="card-body">
+        <form asp-action="Edit" method="post">
+            @Html.AntiForgeryToken()
+            <input type="hidden" asp-for="Id" />
+            <input type="hidden" asp-for="UserName" />
 
-                    <div class="mb-3">
-                        <label class="form-label">Имя пользователя</label>
-                        <input asp-for="UserName" class="form-control" disabled />
-                    </div>
-
-                    <div class="mb-3">
-                        <label asp-for="Email" class="form-label">Email</label>
-                        <input asp-for="Email" class="form-control" type="email" />
-                        <span asp-validation-for="Email" class="text-danger"></span>
-                    </div>
-
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label asp-for="FirstName" class="form-label">Имя</label>
-                            <input asp-for="FirstName" class="form-control" />
-                            <span asp-validation-for="FirstName" class="text-danger"></span>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label asp-for="LastName" class="form-label">Фамилия</label>
-                            <input asp-for="LastName" class="form-control" />
-                            <span asp-validation-for="LastName" class="text-danger"></span>
-                        </div>
-                    </div>
-
-                    <div class="d-flex gap-2">
-                        <button type="submit" class="btn btn-primary">
-                            <i class="bi bi-check-lg"></i> Сохранить
-                        </button>
-                        <a asp-action="Profile" asp-route-id="@Model.Id" class="btn btn-outline-secondary">Отмена</a>
-                    </div>
-                </form>
+            <div class="form-group">
+                <label class="form-label">Имя пользователя</label>
+                <input asp-for="UserName" class="form-control" disabled />
             </div>
-        </div>
+
+            <div class="form-group">
+                <label asp-for="Email" class="form-label">Email</label>
+                <input asp-for="Email" class="form-control" type="email" />
+                <span asp-validation-for="Email" class="form-error"></span>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label asp-for="FirstName" class="form-label">Имя</label>
+                    <input asp-for="FirstName" class="form-control" />
+                    <span asp-validation-for="FirstName" class="form-error"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="LastName" class="form-label">Фамилия</label>
+                    <input asp-for="LastName" class="form-control" />
+                    <span asp-validation-for="LastName" class="form-error"></span>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="card-footer">
+        <button type="submit" class="btn btn-primary" form="edit-form">
+            <i class="fas fa-check"></i> Сохранить
+        </button>
+        <a asp-action="Profile" asp-route-id="@Model.Id" class="btn btn-secondary">Отмена</a>
     </div>
 </div>
 

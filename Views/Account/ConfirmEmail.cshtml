@@ -2,14 +2,15 @@
     ViewData["Title"] = "Подтверждение email";
 }
 
-<div class="row justify-content-center mt-5">
-    <div class="col-md-5">
-        <div class="card shadow">
-            <div class="card-body p-4 text-center">
-                <h3><i class="bi bi-check-circle text-success"></i> Email подтвержден</h3>
-                <p class="text-muted">Ваш email успешно подтвержден. Теперь вы можете войти в систему.</p>
-                <a asp-action="Login" class="btn btn-primary">Войти</a>
+<div class="auth-page">
+    <div class="card">
+        <div class="card-body auth-success">
+            <div class="auth-success-icon">
+                <i class="fas fa-check-circle"></i>
             </div>
+            <h3>Email подтвержден</h3>
+            <p class="auth-subtitle">Ваш email успешно подтвержден. Теперь вы можете войти в систему.</p>
+            <a asp-action="Login" class="btn btn-primary">Войти</a>
         </div>
     </div>
 </div>

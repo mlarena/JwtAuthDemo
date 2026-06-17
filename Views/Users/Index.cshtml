@@ -9,21 +9,23 @@
     var roles = ViewBag.Roles as IEnumerable<JwtAuthDemo.Models.Entities.Role>;
 }
 
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <h2><i class="bi bi-people"></i> Пользователи</h2>
-    <a asp-action="Create" class="btn btn-primary">
-        <i class="bi bi-plus-lg"></i> Создать
-    </a>
+<div class="page-header">
+    <h2><i class="fas fa-users"></i> Пользователи</h2>
+    <div class="page-actions">
+        <a asp-action="Create" class="btn btn-primary">
+            <i class="fas fa-plus"></i> Создать
+        </a>
+    </div>
 </div>
 
-<div class="card mb-4">
-    <div class="card-body">
-        <form asp-action="Index" method="get" class="row g-3">
-            <div class="col-md-3">
+<div class="page-filters">
+    <form asp-action="Index" method="get">
+        <div class="form-row">
+            <div class="form-group">
                 <input type="text" name="search" value="@search" class="form-control" placeholder="Поиск..." />
             </div>
-            <div class="col-md-3">
-                <select name="role" class="form-select">
+            <div class="form-group">
+                <select name="role" class="form-control">
                     <option value="">Все роли</option>
                     @if (roles != null)
                     {
@@ -34,28 +36,28 @@
                     }
                 </select>
             </div>
-            <div class="col-md-3">
-                <select name="status" class="form-select">
+            <div class="form-group">
+                <select name="status" class="form-control">
                     <option value="">Все статусы</option>
                     <option value="active" selected="@(statusFilter == "active")">Активные</option>
                     <option value="inactive" selected="@(statusFilter == "inactive")">Неактивные</option>
                     <option value="locked" selected="@(statusFilter == "locked")">Заблокированные</option>
                 </select>
             </div>
-            <div class="col-md-3">
-                <button type="submit" class="btn btn-outline-primary w-100">
-                    <i class="bi bi-search"></i> Найти
+            <div class="form-group">
+                <button type="submit" class="btn btn-outline-primary">
+                    <i class="fas fa-search"></i> Найти
                 </button>
             </div>
-        </form>
-    </div>
+        </div>
+    </form>
 </div>
 
 <div class="card">
-    <div class="card-body p-0">
+    <div class="card-body">
         <div class="table-responsive">
-            <table class="table table-hover align-middle mb-0">
-                <thead class="table-dark">
+            <table class="table table-hover table-striped">
+                <thead>
                     <tr>
                         <th>Имя</th>
                         <th>Email</th>
@@ -73,50 +75,50 @@
                                 <strong>@user.UserName</strong>
                                 @if (!string.IsNullOrEmpty(user.FirstName) || !string.IsNullOrEmpty(user.LastName))
                                 {
-                                    <br /><small class="text-muted">@user.FirstName @user.LastName</small>
+                                    <br /><small>@user.FirstName @user.LastName</small>
                                 }
                             </td>
                             <td>@user.Email</td>
                             <td>
                                 @foreach (var ur in user.UserRoles)
                                 {
-                                    <span class="badge bg-secondary me-1">@ur.Role.Name</span>
+                                    <span class="badge-gray">@ur.Role.Name</span>
                                 }
                             </td>
                             <td>
                                 @if (user.IsLocked)
                                 {
-                                    <span class="badge bg-danger">Заблокирован</span>
+                                    <span class="badge-danger">Заблокирован</span>
                                 }
                                 else if (!user.IsActive)
                                 {
-                                    <span class="badge bg-warning">Неактивен</span>
+                                    <span class="badge-gray">Неактивен</span>
                                 }
                                 else
                                 {
-                                    <span class="badge bg-success">Активен</span>
+                                    <span class="badge-success">Активен</span>
                                 }
                             </td>
                             <td>@(user.LastLoginAt?.ToString("dd.MM.yyyy HH:mm") ?? "—")</td>
                             <td class="text-end">
-                                <div class="btn-group btn-group-sm">
-                                    <a asp-action="Details" asp-route-id="@user.Id" class="btn btn-outline-info" title="Детали">
-                                        <i class="bi bi-eye"></i>
+                                <div class="table-actions">
+                                    <a asp-action="Details" asp-route-id="@user.Id" class="btn btn-icon btn-sm btn-outline-primary" title="Детали">
+                                        <i class="fas fa-eye"></i>
                                     </a>
-                                    <a asp-action="AssignRoles" asp-route-id="@user.Id" class="btn btn-outline-warning" title="Роли">
-                                        <i class="bi bi-person-badge"></i>
+                                    <a asp-action="AssignRoles" asp-route-id="@user.Id" class="btn btn-icon btn-sm btn-outline-primary" title="Роли">
+                                        <i class="fas fa-id-badge"></i>
                                     </a>
                                     <form asp-action="ToggleLock" asp-route-id="@user.Id" method="post" class="d-inline">
                                         @Html.AntiForgeryToken()
-                                        <button type="submit" class="btn btn-outline-@(user.IsLocked ? "success" : "warning")" title="@(user.IsLocked ? "Разблокировать" : "Заблокировать")">
-                                            <i class="bi bi-@(user.IsLocked ? "unlock" : "lock")"></i>
+                                        <button type="submit" class="btn btn-icon btn-sm @(user.IsLocked ? "btn-outline-primary" : "btn-outline-danger")" title="@(user.IsLocked ? "Разблокировать" : "Заблокировать")">
+                                            <i class="fas fa-@(user.IsLocked ? "unlock" : "lock")"></i>
                                         </button>
                                     </form>
                                     <form asp-action="Delete" asp-route-id="@user.Id" method="post" class="d-inline"
                                           onsubmit="return confirm('Удалить пользователя?')">
                                         @Html.AntiForgeryToken()
-                                        <button type="submit" class="btn btn-outline-danger" title="Удалить">
-                                            <i class="bi bi-trash"></i>
+                                        <button type="submit" class="btn btn-icon btn-sm btn-outline-danger" title="Удалить">
+                                            <i class="fas fa-trash"></i>
                                         </button>
                                     </form>
                                 </div>
@@ -131,18 +133,15 @@
 
 @if (totalPages > 1)
 {
-    <nav class="mt-3">
-        <ul class="pagination justify-content-center">
-            @for (int i = 1; i <= totalPages; i++)
-            {
-                <li class="page-item @(i == currentPage ? "active" : "")">
-                    <a class="page-link" asp-action="Index"
-                       asp-route-page="@i"
-                       asp-route-search="@search"
-                       asp-route-role="@roleFilter"
-                       asp-route-status="@statusFilter">@i</a>
-                </li>
-            }
-        </ul>
-    </nav>
+    <div class="pagination">
+        @for (int i = 1; i <= totalPages; i++)
+        {
+            <a asp-action="Index"
+               asp-route-page="@i"
+               asp-route-search="@search"
+               asp-route-role="@roleFilter"
+               asp-route-status="@statusFilter"
+               class="btn btn-sm @(i == currentPage ? "btn-primary" : "btn-secondary")">@i</a>
+        }
+    </div>
 }

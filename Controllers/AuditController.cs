@@ -1,29 +1,38 @@
-using JwtAuthDemo.Services;
 using JwtAuthDemo.ViewModels;
+using JwtAuthDemo.Services;
+using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
 
 namespace JwtAuthDemo.Controllers;
 
 [Authorize]
+[Authorize(Policy = "CanManageAudit")]
 public class AuditController : Controller
 {
-    private readonly IAuditLogQueryableService _auditLogService;
+    private readonly IAuditLogQueryableService _auditService;
 
-    public AuditController(IAuditLogQueryableService auditLogService)
+    public AuditController(IAuditLogQueryableService auditService)
     {
-        _auditLogService = auditLogService;
+        _auditService = auditService;
     }
 
-    [Authorize(Policy = "CanManageAudit")]
-    public async Task<IActionResult> Index(int page = 1, int? userId = null, string? action = null, DateTimeOffset? from = null, DateTimeOffset? to = null, string? status = null)
+    public async Task<IActionResult> Index(int? userId, string? action, string? from, string? to, string? status, int page = 1)
     {
-        var pageSize = 20;
-        var logs = await _auditLogService.GetLogsAsync(page, pageSize, userId, action, from, to, status);
-        var totalCount = await _auditLogService.GetLogsCountAsync(userId, action, from, to, status);
+        const int pageSize = 20;
 
-        var model = new AuditLogViewModel
+        DateTimeOffset? fromDate = null;
+        DateTimeOffset? toDate = null;
+
+        if (DateTimeOffset.TryParse(from, out var parsedFrom))
+            fromDate = parsedFrom;
+        if (DateTimeOffset.TryParse(to, out var parsedTo))
+            toDate = parsedTo;
+
+        var logs = await _auditService.GetLogsAsync(page, pageSize, userId, action, fromDate, toDate, status);
+        var totalCount = await _auditService.GetLogsCountAsync(userId, action, fromDate, toDate, status);
+
+        var viewModel = new AuditLogViewModel
         {
             Logs = logs.Select(l => new AuditLogEntry
             {
@@ -37,15 +46,26 @@ public class AuditController : Controller
                 CreatedAt = l.CreatedAt
             }).ToList(),
             CurrentPage = page,
-            TotalPages = (int)Math.Ceiling((double)totalCount / pageSize),
+            TotalPages = (int)Math.Ceiling(totalCount / (double)pageSize),
             TotalItems = totalCount,
             FilterUserId = userId,
             FilterAction = action,
-            FilterFrom = from,
-            FilterTo = to,
+            FilterFrom = fromDate,
+            FilterTo = toDate,
             FilterStatus = status
         };
 
-        return View(model);
+        return View(viewModel);
+    }
+
+    private int? GetCurrentUserId()
+    {
+        var claim = User.FindFirst(ClaimTypes.NameIdentifier);
+        return claim != null ? int.Parse(claim.Value) : null;
+    }
+
+    private string? GetClientIp()
+    {
+        return HttpContext.Connection.RemoteIpAddress?.ToString();
     }
 }

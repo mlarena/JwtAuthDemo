@@ -3,9 +3,11 @@
     ViewData["Title"] = $"Права — {Model.RoleName}";
 }
 
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <h2><i class="bi bi-shield-check"></i> Права: @Model.RoleName</h2>
-    <a asp-action="Index" class="btn btn-outline-secondary">Назад</a>
+<div class="page-header">
+    <h2><i class="fas fa-shield-alt"></i> Права: @Model.RoleName</h2>
+    <div class="page-actions">
+        <a asp-action="Index" class="btn btn-secondary">Назад</a>
+    </div>
 </div>
 
 <form asp-action="ManagePermissions" method="post">
@@ -20,27 +22,25 @@
                 <div class="form-check">
                     <input type="checkbox" class="form-check-input group-toggle" id="group_@group.Resource"
                            data-resource="@group.Resource" />
-                    <label for="group_@group.Resource" class="form-check-label fw-bold">
-                        <i class="bi bi-folder2"></i> @group.Resource
+                    <label for="group_@group.Resource" class="form-check-label">
+                        <i class="fas fa-folder"></i> @group.Resource
                     </label>
                 </div>
             </div>
             <div class="card-body">
-                <div class="row">
+                <div class="content-grid">
                     @foreach (var perm in group.Permissions)
                     {
-                        <div class="col-md-4 mb-2">
-                            <div class="form-check">
-                                <input type="checkbox" name="SelectedPermissionIds" value="@perm.Id"
-                                       class="form-check-input permission-check"
-                                       data-resource="@group.Resource"
-                                       id="perm_@perm.Id"
-                                       checked="@(Model.SelectedPermissionIds.Contains(perm.Id))" />
-                                <label for="perm_@perm.Id" class="form-check-label">
-                                    @perm.Name
-                                    <small class="text-muted d-block">@perm.Description</small>
-                                </label>
-                            </div>
+                        <div class="form-check">
+                            <input type="checkbox" name="SelectedPermissionIds" value="@perm.Id"
+                                   class="form-check-input permission-check"
+                                   data-resource="@group.Resource"
+                                   id="perm_@perm.Id"
+                                   checked="@(Model.SelectedPermissionIds.Contains(perm.Id))" />
+                            <label for="perm_@perm.Id" class="form-check-label">
+                                @perm.Name
+                                <small class="text-muted d-block">@perm.Description</small>
+                            </label>
                         </div>
                     }
                 </div>
@@ -48,8 +48,8 @@
         </div>
     }
 
-    <button type="submit" class="btn btn-primary btn-lg">
-        <i class="bi bi-check-lg"></i> Сохранить разрешения
+    <button type="submit" class="btn btn-primary">
+        <i class="fas fa-check"></i> Сохранить разрешения
     </button>
 </form>
 
