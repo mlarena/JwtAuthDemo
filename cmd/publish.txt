@@ -1,5 +1,4 @@
 # Linux ARM64
 dotnet publish "C:\git\JwtAuthDemo\JwtAuthDemo.csproj" -c Release -r linux-arm64 --self-contained true -p:PublishSingleFile=true -p:EnableCompressionInSingleFile=true -o "C:\git\JwtAuthDemo\release\linux-arm64\"
-
 # Linux x64
 dotnet publish "C:\git\JwtAuthDemo\JwtAuthDemo.csproj" -c Release -r linux-x64 --self-contained true -p:PublishSingleFile=true -p:EnableCompressionInSingleFile=true -o "C:\git\JwtAuthDemo\release\linux-x64\"
