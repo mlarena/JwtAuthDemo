@@ -8,7 +8,7 @@ public class DashboardViewModel
     public int OnlineNow { get; set; }
     public List<ActivityLogEntry> RecentActivity { get; set; } = new();
     public List<DailyRegistration> RegistrationsChart { get; set; } = new();
-    public List<RoleDistribution> RoleDistribution { get; set; } = new();
+    public List<OnlineUserEntry> OnlineUsers { get; set; } = new();
 }
 
 public class ActivityLogEntry
@@ -26,8 +26,10 @@ public class DailyRegistration
     public int Count { get; set; }
 }
 
-public class RoleDistribution
+public class OnlineUserEntry
 {
-    public string RoleName { get; set; } = string.Empty;
-    public int Count { get; set; }
+    public string UserName { get; set; } = string.Empty;
+    public string? Email { get; set; }
+    public string? IpAddress { get; set; }
+    public DateTimeOffset LastActivity { get; set; }
 }

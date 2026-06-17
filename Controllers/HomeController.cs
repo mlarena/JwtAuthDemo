@@ -55,12 +55,16 @@ public class HomeController : Controller
                     Date = g.Key.ToString("dd.MM"),
                     Count = g.Count()
                 }).ToListAsync(),
-            RoleDistribution = await _context.UserRoles
-                .GroupBy(ur => ur.Role.Name)
-                .Select(g => new RoleDistribution
+            OnlineUsers = await _context.RefreshTokens
+                .Where(rt => rt.Revoked == null && rt.Expires > DateTimeOffset.UtcNow)
+                .Include(rt => rt.User)
+                .OrderByDescending(rt => rt.Created)
+                .Select(rt => new OnlineUserEntry
                 {
-                    RoleName = g.Key,
-                    Count = g.Count()
+                    UserName = rt.User != null ? rt.User.UserName : "Unknown",
+                    Email = rt.User != null ? rt.User.Email : null,
+                    IpAddress = rt.CreatedByIp,
+                    LastActivity = rt.Created
                 }).ToListAsync()
         };
 

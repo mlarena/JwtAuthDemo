@@ -4,47 +4,39 @@
 }
 
 <div class="page-header">
-    <h2><i class="fas fa-tachometer-alt"></i> Dashboard</h2>
-    <p>Добро пожаловать, @User.Identity?.Name!</p>
+    <h1>Dashboard</h1>
+    <span class="text-secondary text-sm">Добро пожаловать, @User.Identity?.Name</span>
 </div>
 
-<div class="content-grid cols-4">
+<div class="content-grid cols-4 mb-6">
     <div class="stat-card">
-        <div class="card-body text-center">
-            <i class="fas fa-users fa-2x"></i>
-            <h3>@Model.TotalUsers</h3>
-            <p>Всего пользователей</p>
-        </div>
+        <div class="stat-icon primary"><i class="fas fa-users"></i></div>
+        <div class="stat-label">Всего пользователей</div>
+        <div class="stat-value">@Model.TotalUsers</div>
     </div>
     <div class="stat-card">
-        <div class="card-body text-center">
-            <i class="fas fa-user-check fa-2x"></i>
-            <h3>@Model.ActiveToday</h3>
-            <p>Активных сегодня</p>
-        </div>
+        <div class="stat-icon success"><i class="fas fa-user-check"></i></div>
+        <div class="stat-label">Активных сегодня</div>
+        <div class="stat-value">@Model.ActiveToday</div>
     </div>
     <div class="stat-card">
-        <div class="card-body text-center">
-            <i class="fas fa-user-plus fa-2x"></i>
-            <h3>@Model.NewThisWeek</h3>
-            <p>Новых за неделю</p>
-        </div>
+        <div class="stat-icon warning"><i class="fas fa-user-plus"></i></div>
+        <div class="stat-label">Новых за неделю</div>
+        <div class="stat-value">@Model.NewThisWeek</div>
     </div>
     <div class="stat-card">
-        <div class="card-body text-center">
-            <i class="fas fa-wifi fa-2x"></i>
-            <h3>@Model.OnlineNow</h3>
-            <p>Онлайн сейчас</p>
-        </div>
+        <div class="stat-icon danger"><i class="fas fa-wifi"></i></div>
+        <div class="stat-label">Онлайн сейчас</div>
+        <div class="stat-value">@Model.OnlineNow</div>
     </div>
 </div>
 
-<div class="content-grid cols-2">
+<div class="content-grid cols-2 mb-6">
     <div class="card">
         <div class="card-header">
-            <i class="fas fa-activity"></i> Последние действия
+            <h3 class="card-title"><i class="fas fa-history mr-2"></i>Последние действия</h3>
         </div>
-        <div class="card-body">
+        <div class="card-body" style="padding:0">
             <div class="table-responsive">
                 <table class="table table-hover table-striped">
                     <thead>
@@ -66,8 +58,12 @@
                                         @log.Status
                                     </span>
                                 </td>
-                                <td>@log.CreatedAt.ToString("dd.MM HH:mm")</td>
+                                <td class="text-muted text-sm">@log.CreatedAt.ToString("dd.MM HH:mm")</td>
                             </tr>
+                        }
+                        @if (!Model.RecentActivity.Any())
+                        {
+                            <tr><td colspan="4" class="text-center text-muted p-4">Нет записей</td></tr>
                         }
                     </tbody>
                 </table>
@@ -77,22 +73,40 @@
 
     <div class="card">
         <div class="card-header">
-            <i class="fas fa-chart-pie"></i> Распределение по ролям
+            <h3 class="card-title"><i class="fas fa-wifi mr-2"></i>Онлайн сейчас</h3>
+            <span class="badge-success">@Model.OnlineUsers.Count</span>
         </div>
-        <div class="card-body">
-            @foreach (var role in Model.RoleDistribution)
-            {
-                var percentage = Model.TotalUsers > 0 ? (role.Count * 100.0 / Model.TotalUsers) : 0;
-                <div class="form-group">
-                    <div class="form-row">
-                        <span>@role.RoleName</span>
-                        <span>@role.Count (@percentage.ToString("F1")%)</span>
-                    </div>
-                    <div class="progress" style="height: 20px;">
-                        <div class="progress-bar" style="width: @percentage%"></div>
-                    </div>
-                </div>
-            }
+        <div class="card-body" style="padding:0">
+            <div class="table-responsive">
+                <table class="table table-hover table-striped">
+                    <thead>
+                        <tr>
+                            <th>Пользователь</th>
+                            <th>Email</th>
+                            <th>IP</th>
+                            <th>Последняя активность</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var user in Model.OnlineUsers)
+                        {
+                            <tr>
+                                <td>
+                                    <i class="fas fa-circle text-success mr-2" style="font-size:0.5rem"></i>
+                                    @user.UserName
+                                </td>
+                                <td class="text-muted">@user.Email</td>
+                                <td class="text-muted text-sm">@(user.IpAddress ?? "—")</td>
+                                <td class="text-muted text-sm">@user.LastActivity.ToString("dd.MM HH:mm:ss")</td>
+                            </tr>
+                        }
+                        @if (!Model.OnlineUsers.Any())
+                        {
+                            <tr><td colspan="4" class="text-center text-muted p-4">Нет активных сессий</td></tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 </div>
